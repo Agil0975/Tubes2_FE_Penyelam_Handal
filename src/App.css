@@ -2,6 +2,18 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to left, #87ceeb, #ffffff, #87ceeb);
+  color: #fff;
+}
+
+.animate-background {
+  animation: changeBackgroundColor 5s infinite;
+}
+
 body {
   font-family: "Tauri", sans-serif;
 }
@@ -43,7 +55,7 @@ body {
 .addButton {
   padding: 10px 20px;
   border: none;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border-radius: 5px;
   cursor: pointer;
@@ -64,7 +76,7 @@ body {
 }
 
 .arrow::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 100%;
@@ -79,5 +91,3 @@ body {
 .label {
   text-align: center;
 }
-
-

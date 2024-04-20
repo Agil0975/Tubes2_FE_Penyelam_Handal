@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Switch } from "antd";
 import WikipediaFetch from "./WikipediaFetch";
+import ResultList from "./ResultList";
+import ResultListList from "./ResultListList";
+import "../App.css";
 
 export default function InputForm() {
   const [url1, setUrl1] = useState("");
@@ -8,8 +11,93 @@ export default function InputForm() {
   const [isBFS, setFunc] = useState(true);
   const [triggerFetch, setTriggerFetch] = useState(false);
 
+  const urlList = [
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+    [
+      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
+      "https://en.wikipedia.org/wiki/Attack_aircraft",
+      "https://en.wikipedia.org/wiki/Tactical_bombing",
+    ],
+  ];
+
+  function getPageTitleFromWikiUrl(url) {
+    const parts = url.split("/");
+
+    const index = parts.findIndex((part) => part === "wiki");
+
+    if (index !== -1 && index < parts.length - 1) {
+      return parts[index + 1];
+    } else {
+      return null;
+    }
+  }
+
   const handleFunc = () => {
-    isBFS ? setFunc(false) : setFunc(true);
+    setFunc(!isBFS);
   };
 
   const handleUrl1Change = (event) => {
@@ -24,67 +112,65 @@ export default function InputForm() {
     setTriggerFetch(!triggerFetch);
   };
 
-  const print = () => {
-    console.log(url1);
-    console.log(url2);
-  };
-
-  function getPageTitleFromWikiUrl(url) {
-    const parts = url.split("/");
-
-    const index = parts.findIndex((part) => part === "wiki");
-
-    if (index !== -1 && index < parts.length - 1) {
-      return parts[index + 1];
-    } else {
-      return null;
-    }
-  }
-
   return (
-    <div className="form-container">
-      <div className="inputs-container">
-        <input
-          type="url"
-          placeholder="URL 1"
-          className="input"
-          value={url1}
-          onChange={handleUrl1Change}
-        />
-        <div className="arrow"></div>
-        <input
-          type="url"
-          placeholder="URL 2"
-          className="input"
-          value={url2}
-          onChange={handleUrl2Change}
-        />
+    <div className="flex flex-col items-center justify-center">
+      <div className="text-white p-6 mb-8">
+        <div className="flex flex-col md:flex-row mb-4 items-center justify-center">
+          <input
+            type="url"
+            placeholder="URL 1"
+            className="input"
+            value={url1}
+            onChange={handleUrl1Change}
+          />
+          <div className="hidden md:flex items-center justify-center mx-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+          </div>
+          <input
+            type="url"
+            placeholder="URL 2"
+            className="input"
+            value={url2}
+            onChange={handleUrl2Change}
+          />
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+          <div className="text-lg mb-2 md:mb-0 md:mr-2">
+            <span>
+              {isBFS ? (
+                <label className="text-2xl">BFS Search Algorithm</label>
+              ) : (
+                <label className="text-2xl">IDS Search Algorithm</label>
+              )}
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+          <Switch onClick={handleFunc} defaultChecked={isBFS} />
+        </div>
+        <div className="flex justify-center">
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300"
+            onClick={handleProcessClick}
+          >
+            Process Wiki Race
+          </button>
+        </div>
       </div>
-      <div className="inputs-container">
-        <Switch onClick={handleFunc} defaultValue={true} />
-      </div>
-      <div className="inpus-container">
-        {isBFS ? (
-          <label className="label">BFS Search Algorithm</label>
-        ) : (
-          <label className="label">IDS Search Algorithm</label>
-        )}
-      </div>
-      <button className="addButton" onClick={handleProcessClick}>
-        Process Wiki Race
-      </button>
-      {url1 && (
-        <WikipediaFetch
-          wantedTitle={getPageTitleFromWikiUrl(url1)}
-          key={triggerFetch ? "1" : "2"}
-        />
-      )}
-      {url2 && (
-        <WikipediaFetch
-          wantedTitle={getPageTitleFromWikiUrl(url2)}
-          key={triggerFetch ? "3" : "4"}
-        />
-      )}
+      <ResultListList UrlListList={urlList} />
     </div>
   );
 }

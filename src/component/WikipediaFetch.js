@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "../App.css";
 
 const WikipediaFetch = ({ wantedTitle }) => {
   const [pageContent, setPageContent] = useState("");
@@ -29,13 +30,7 @@ const WikipediaFetch = ({ wantedTitle }) => {
       });
   }, []);
 
-  return (
-    <div>
-      <h2>{pageTitle}</h2>
-      {pageImage && <img src={pageImage} alt={pageTitle} />}
-      {/* <div dangerouslySetInnerHTML={{ __html: pageContent }} /> */}
-    </div>
-  );
+  return [pageTitle, pageImage];
 };
 
 export default WikipediaFetch;
