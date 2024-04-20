@@ -114,7 +114,7 @@ export default function InputForm() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="text-white p-6 mb-8">
+      <div className="text-black p-6 mb-8">
         <div className="flex flex-col md:flex-row mb-4 items-center justify-center">
           <input
             type="url"
