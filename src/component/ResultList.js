@@ -1,6 +1,7 @@
 import React from "react";
 import WikipediaFetch from "./WikipediaFetch";
 import "../App.css";
+import defaultImg from "../images/default_image.jpg";
 
 const ResultList = ({ UrlList }) => {
   function getPageTitleFromWikiUrl(url) {
@@ -46,7 +47,7 @@ const ResultList = ({ UrlList }) => {
               <div className="flex-shrink-0">
                 <img
                   className="rounded-lg w-10 h-10"
-                  src={pageImage ? pageImage : "./default_image.jpg"}
+                  src={pageImage ? pageImage : { defaultImg }}
                   alt="image"
                 />
               </div>
