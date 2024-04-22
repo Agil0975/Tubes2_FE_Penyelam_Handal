@@ -3,6 +3,7 @@ import { Switch } from "antd";
 import WikipediaFetch from "./WikipediaFetch";
 import ResultList from "./ResultList";
 import ResultListList from "./ResultListList";
+import Suggestions from "./Suggestions";
 import "../App.css";
 
 export default function InputForm() {
@@ -110,18 +111,17 @@ export default function InputForm() {
 
   const handleProcessClick = () => {
     setTriggerFetch(!triggerFetch);
+    console.log(url1);
+    console.log(url2);
   };
 
   return (
     <div className="flex flex-col items-center justify-center mb-16">
       <div className="text-white p-6 mb-8">
         <div className="flex flex-col md:flex-row mb-4 items-center justify-center">
-          <input
-            type="url"
-            placeholder="URL 1"
-            className="input"
-            value={url1}
-            onChange={handleUrl1Change}
+          <Suggestions
+            placeholder="Search for Wiki page (URL 1)"
+            setUrl={(wikiUrl) => setUrl1(wikiUrl)}
           />
           <div className="hidden md:flex items-center justify-center mx-4">
             <svg
@@ -139,14 +139,12 @@ export default function InputForm() {
               />
             </svg>
           </div>
-          <input
-            type="url"
-            placeholder="URL 2"
-            className="input"
-            value={url2}
-            onChange={handleUrl2Change}
+          <Suggestions
+            placeholder="Search for Wiki page (URL 2)"
+            setUrl={(wikiUrl) => setUrl2(wikiUrl)}
           />
         </div>
+
         <div className="flex flex-col md:flex-row items-center justify-center mb-4">
           <div className="text-lg mb-2 md:mb-0 md:mr-2">
             <span>
@@ -158,9 +156,11 @@ export default function InputForm() {
             </span>
           </div>
         </div>
+
         <div className="flex flex-col md:flex-row items-center justify-center mb-4">
           <Switch onClick={handleFunc} defaultChecked={isBFS} />
         </div>
+
         <div className="flex justify-center">
           <button
             className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300"
@@ -170,6 +170,7 @@ export default function InputForm() {
           </button>
         </div>
       </div>
+
       <ResultListList UrlListList={urlList} />
     </div>
   );
