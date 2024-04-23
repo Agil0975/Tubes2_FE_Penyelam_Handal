@@ -171,7 +171,7 @@ export default function InputForm() {
           </button>
         </div>
       </div>
-      <ResultGraph data={urlList} />
+      <div className="mb-16">{urlList && <ResultGraph data={urlList} />}</div>
       <ResultListList UrlListList={urlList} />
     </div>
   );

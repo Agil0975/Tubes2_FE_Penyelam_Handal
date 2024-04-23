@@ -3,12 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import InputForm from "./component/InputForm";
 import About from "./pages/About";
 import NavLink from "./component/NavLink";
-
 function App() {
   return (
     <Router>
       <div className="text-white min-h-screen flex flex-col items-center justify-center bg-black">
-        <div className="bg-repeat w-full h-full text-primary-100 heropattern-topography-red-500 min-h-screen flex flex-col items-center justify-center relative">
+        <div className="bg-repeat w-full h-full text-primary-100 heropattern-topography-red-800 min-h-screen flex flex-col items-center justify-center relative">
           <div className="absolute top-0 right-0 m-4 flex flex-row items-center">
             <NavLink to="/about" text="About" />
             <div className="h-6 w-px bg-white mx-4"></div>
