@@ -4,6 +4,7 @@ import WikipediaFetch from "./WikipediaFetch";
 import ResultList from "./ResultList";
 import ResultListList from "./ResultListList";
 import Suggestions from "./Suggestions";
+import ResultGraph from "./ResultGraph";
 import "../App.css";
 
 export default function InputForm() {
@@ -170,7 +171,7 @@ export default function InputForm() {
           </button>
         </div>
       </div>
-
+      <ResultGraph data={urlList} />
       <ResultListList UrlListList={urlList} />
     </div>
   );
