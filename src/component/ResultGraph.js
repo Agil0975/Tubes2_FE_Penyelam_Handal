@@ -4,23 +4,20 @@ import * as d3 from "d3";
 const ResultGraph = ({ data }) => {
   const svgRef = useRef(null);
 
-  // Define a color scale with a distinct color for each index
-  const colorScale = d3.scaleOrdinal(d3.schemeCategory10); // Category10 offers 10 distinct colors
+  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
 
-    // Clear previous graph content
-    svg.selectAll("*").remove(); // Clean up old graph
+    svg.selectAll("*").remove();
 
     const nodesMap = new Map();
     const linksMap = new Map();
 
-    // Generate unique nodes and links, and store their indices for color mapping
     data.forEach((sublist) => {
       sublist.forEach((item, index) => {
         if (!nodesMap.has(item)) {
-          nodesMap.set(item, { id: item, color: colorScale(index) }); // Assign color based on index
+          nodesMap.set(item, { id: item, color: colorScale(index) });
         }
 
         if (index > 0) {
@@ -49,7 +46,7 @@ const ResultGraph = ({ data }) => {
 
     const zoom = d3
       .zoom()
-      .scaleExtent([0.1, 10]) // Allow broader zooming
+      .scaleExtent([0.1, 10])
       .on("zoom", (event) => {
         container.attr("transform", event.transform);
       });
@@ -66,7 +63,6 @@ const ResultGraph = ({ data }) => {
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide().radius(30));
 
-    // Create links
     const link = container
       .selectAll(".link")
       .data(links)
@@ -75,14 +71,13 @@ const ResultGraph = ({ data }) => {
       .attr("stroke", "gray")
       .attr("stroke-width", 2);
 
-    // Create nodes with drag and click behavior
     const node = container
       .selectAll(".node")
       .data(nodes)
       .enter()
       .append("circle")
       .attr("r", 10)
-      .attr("fill", (d) => d.color) // Set the color based on the node's color property
+      .attr("fill", (d) => d.color)
       .call(
         d3
           .drag()
@@ -110,7 +105,6 @@ const ResultGraph = ({ data }) => {
         window.open(d.id, "_blank");
       });
 
-    // Add text labels to nodes
     const label = container
       .selectAll(".label")
       .data(nodes)
@@ -121,7 +115,6 @@ const ResultGraph = ({ data }) => {
       .attr("fill", "black")
       .text((d) => new URL(d.id).pathname.split("/").pop());
 
-    // Update simulation on each tick
     simulation.on("tick", () => {
       link
         .attr("x1", (d) => d.source.x)
@@ -131,16 +124,13 @@ const ResultGraph = ({ data }) => {
 
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
-      label
-        .attr("x", (d) => d.x + 15) // Horizontal offset for label
-        .attr("y", (d) => d.y + 4); // Vertical offset for label
+      label.attr("x", (d) => d.x + 15).attr("y", (d) => d.y + 4);
     });
 
-    // Cleanup function to stop simulation when component unmounted
     return () => {
-      simulation.stop(); // Stop the simulation when unmounted
+      simulation.stop();
     };
-  }, [data]); // Re-run the effect when data changes
+  }, [data]);
 
   return (
     <div className="flex justify-center items-center h-full">
