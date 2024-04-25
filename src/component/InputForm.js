@@ -1,119 +1,71 @@
 import React, { useState } from "react";
-import { Switch } from "antd";
-import WikipediaFetch from "./WikipediaFetch";
-import ResultList from "./ResultList";
-import ResultListList from "./ResultListList";
+import { Switch, Spin } from "antd";
 import Suggestions from "./Suggestions";
 import ResultGraph from "./ResultGraph";
-import "../App.css";
+import ResultListList from "./ResultListList";
 
 export default function InputForm() {
   const [url1, setUrl1] = useState("");
   const [url2, setUrl2] = useState("");
   const [isBFS, setFunc] = useState(true);
-  const [triggerFetch, setTriggerFetch] = useState(false);
-
-  const urlList = [
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-    [
-      "https://en.wikipedia.org/wiki/Lockheed_Martin_F-22_Raptor",
-      "https://en.wikipedia.org/wiki/Attack_aircraft",
-      "https://en.wikipedia.org/wiki/Tactical_bombing",
-    ],
-  ];
-
-  function getPageTitleFromWikiUrl(url) {
-    const parts = url.split("/");
-
-    const index = parts.findIndex((part) => part === "wiki");
-
-    if (index !== -1 && index < parts.length - 1) {
-      return parts[index + 1];
-    } else {
-      return null;
-    }
-  }
+  const [solutions, setSolutions] = useState([]);
+  const [duration, setDuration] = useState("");
+  const [isSingle, setMethod] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFunc = () => {
     setFunc(!isBFS);
   };
 
-  const handleUrl1Change = (event) => {
-    setUrl1(event.target.value);
+  const handleMethod = () => {
+    setMethod(!isSingle);
   };
 
-  const handleUrl2Change = (event) => {
-    setUrl2(event.target.value);
+  const getTitleFromWikiUrl = (url) => {
+    const parts = url.split("/");
+    const index = parts.findIndex((part) => part === "wiki");
+    return index !== -1 && index < parts.length - 1 ? parts[index + 1] : null;
   };
 
   const handleProcessClick = () => {
-    setTriggerFetch(!triggerFetch);
-    console.log(url1);
-    console.log(url2);
+    setIsLoading(true);
+    const algorithm = isBFS ? "bfs" : "ids";
+    const results = isSingle ? "single" : "many";
+
+    const source = getTitleFromWikiUrl(url1);
+    const goal = getTitleFromWikiUrl(url2);
+
+    if (!source || !goal) {
+      console.error("Invalid URLs for source or goal");
+      setIsLoading(false);
+      return;
+    }
+
+    const queryParams = new URLSearchParams({
+      source,
+      goal,
+    }).toString();
+
+    const url = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const { solutions, duration } = data;
+        setSolutions(solutions);
+        setDuration(duration);
+      })
+      .catch((error) => {
+        console.error("Error fetching:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -162,6 +114,22 @@ export default function InputForm() {
           <Switch onClick={handleFunc} defaultChecked={isBFS} />
         </div>
 
+        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+          <div className="text-lg mb-2 md:mb-0 md:mr-2">
+            <span>
+              {isSingle ? (
+                <label className="text-2xl">Single Solution</label>
+              ) : (
+                <label className="text-2xl">Multiple Solution</label>
+              )}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+          <Switch onClick={handleMethod} defaultChecked={isSingle} />
+        </div>
+
         <div className="flex justify-center">
           <button
             className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300"
@@ -171,8 +139,20 @@ export default function InputForm() {
           </button>
         </div>
       </div>
-      <div className="mb-16">{urlList && <ResultGraph data={urlList} />}</div>
-      <ResultListList UrlListList={urlList} />
+
+      {isLoading ? (
+        <Spin tip="Loading..." size="large" />
+      ) : (
+        solutions.length > 0 && (
+          <div className="mb-16">
+            <ResultGraph data={solutions} />
+            <ResultListList UrlListList={solutions} />
+            <div className="text-white mt-4">
+              <span>Duration: {duration}</span>
+            </div>
+          </div>
+        )
+      )}
     </div>
   );
 }
