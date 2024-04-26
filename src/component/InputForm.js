@@ -1,8 +1,18 @@
 import React, { useState } from "react";
-import { Switch, Spin } from "antd";
+import { Switch, Spin, message } from "antd";
 import Suggestions from "./Suggestions";
 import ResultGraph from "./ResultGraph";
 import ResultListList from "./ResultListList";
+
+const isValidWikiUrl = (url) => {
+  const pattern = /^https:\/\/en\.wikipedia\.org\/wiki\//;
+  return pattern.test(url);
+};
+
+const doesWikiPageExist = async (url) => {
+  const response = await fetch(url, { method: "HEAD" });
+  return response.ok;
+};
 
 export default function InputForm() {
   const [url1, setUrl1] = useState("");
@@ -27,32 +37,55 @@ export default function InputForm() {
     return index !== -1 && index < parts.length - 1 ? parts[index + 1] : null;
   };
 
-  const handleProcessClick = () => {
+  const validateUrl = async (url) => {
+    if (!isValidWikiUrl(url)) {
+      message.error("Invalid Wikipedia URL");
+      return false;
+    }
+
+    try {
+      const exists = await doesWikiPageExist(url);
+      if (!exists) {
+        message.error("Wikipedia page does not exist");
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      message.error("Error checking Wikipedia page");
+      return false;
+    }
+  };
+
+  const handleProcessClick = async () => {
     setIsLoading(true);
+
+    const isValidUrl1 = await validateUrl(url1);
+    const isValidUrl2 = await validateUrl(url2);
+
+    if (!isValidUrl1 || !isValidUrl2) {
+      setIsLoading(false);
+      return;
+    }
+
     const algorithm = isBFS ? "bfs" : "ids";
     const results = isSingle ? "single" : "many";
 
     const source = getTitleFromWikiUrl(url1);
     const goal = getTitleFromWikiUrl(url2);
 
-    if (!source || !goal) {
-      console.error("Invalid URLs for source or goal");
-      setIsLoading(false);
-      return;
-    }
-
     const queryParams = new URLSearchParams({
       source,
       goal,
     }).toString();
 
-    const url = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
+    const requestUrl = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
 
-    fetch(url)
+    fetch(requestUrl)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        // if (!response.found) {
+        //   throw new Error("Network response was not ok");
+        // }
         return response.json();
       })
       .then((data) => {
@@ -74,9 +107,10 @@ export default function InputForm() {
         <div className="flex flex-col md:flex-row mb-4 items-center justify-center">
           <Suggestions
             placeholder="Search for Wiki page (URL 1)"
-            setUrl={(wikiUrl) => setUrl1(wikiUrl)}
+            setUrl={setUrl1}
           />
-          <div className="hidden md:flex items-center justify-center mx-4">
+
+          <div className="hidden md:flex items-center justify-center mx-4 mt-10">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-white"
@@ -92,9 +126,10 @@ export default function InputForm() {
               />
             </svg>
           </div>
+
           <Suggestions
             placeholder="Search for Wiki page (URL 2)"
-            setUrl={(wikiUrl) => setUrl2(wikiUrl)}
+            setUrl={setUrl2}
           />
         </div>
 

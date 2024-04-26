@@ -67,6 +67,7 @@ const Suggestions = ({ setUrl, placeholder }) => {
   };
 
   const handleInputChange = (e) => {
+    setUrl(e.target.value);
     setQuery(e.target.value);
     setShowDropdown(true);
   };
