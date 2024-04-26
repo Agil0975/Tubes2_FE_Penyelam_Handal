@@ -57,31 +57,28 @@ export default function InputForm() {
     }
   };
 
-  const handleProcessClick = async () => {
+  const handleProcessClick = () => {
     setIsLoading(true);
-
-    const isValidUrl1 = await validateUrl(url1);
-    const isValidUrl2 = await validateUrl(url2);
-
-    if (!isValidUrl1 || !isValidUrl2) {
-      setIsLoading(false);
-      return;
-    }
-
     const algorithm = isBFS ? "bfs" : "ids";
     const results = isSingle ? "single" : "many";
 
     const source = getTitleFromWikiUrl(url1);
     const goal = getTitleFromWikiUrl(url2);
 
+    if (!source || !goal) {
+      message.error("Invalid URLs for source or goal");
+      setIsLoading(false);
+      return;
+    }
+
     const queryParams = new URLSearchParams({
       source,
       goal,
     }).toString();
 
-    const requestUrl = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
+    const url = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
 
-    fetch(requestUrl)
+    fetch(url)
       .then((response) => {
         // if (!response.found) {
         //   throw new Error("Network response was not ok");
@@ -107,10 +104,9 @@ export default function InputForm() {
         <div className="flex flex-col md:flex-row mb-4 items-center justify-center">
           <Suggestions
             placeholder="Search for Wiki page (URL 1)"
-            setUrl={setUrl1}
+            setUrl={(wikiUrl) => setUrl1(wikiUrl)}
           />
-
-          <div className="hidden md:flex items-center justify-center mx-4 mt-10">
+          <div className="hidden md:flex items-center justify-center mx-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-white"
@@ -126,10 +122,9 @@ export default function InputForm() {
               />
             </svg>
           </div>
-
           <Suggestions
             placeholder="Search for Wiki page (URL 2)"
-            setUrl={setUrl2}
+            setUrl={(wikiUrl) => setUrl2(wikiUrl)}
           />
         </div>
 
@@ -181,10 +176,10 @@ export default function InputForm() {
         solutions.length > 0 && (
           <div className="mb-16">
             <ResultGraph data={solutions} />
-            <ResultListList UrlListList={solutions} />
-            <div className="text-white mt-4">
+            <div className="text-white justify-center items-center flex mb-8">
               <span>Duration: {duration}</span>
             </div>
+            <ResultListList UrlListList={solutions} />
           </div>
         )
       )}

@@ -133,7 +133,7 @@ const ResultGraph = ({ data }) => {
   }, [data]);
 
   return (
-    <div className="flex justify-center items-center h-full mb-8">
+    <div className="flex justify-center items-center h-full">
       <svg ref={svgRef} />
     </div>
   );
