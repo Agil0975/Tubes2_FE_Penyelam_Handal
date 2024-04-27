@@ -146,102 +146,104 @@ export default function InputForm() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mb-16">
-      <div className="text-white p-6 mb-8">
-        <div className="flex flex-col md:flex-row mb-4 items-center justify-center">
-          <Suggestions
-            placeholder="Search for Wiki page (URL 1)"
-            setUrl={(wikiUrl) => setUrl1(wikiUrl)}
-          />
-          <div className="hidden md:flex items-center justify-center mx-4 mt-10">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <form>
+      <div className="flex flex-col items-center justify-center mb-16">
+        <div className="text-white p-6 mb-8">
+          <div className="flex flex-col md:flex-row mb-4 items-center justify-center">
+            <Suggestions
+              placeholder="Search for Wiki page (URL 1)"
+              setUrl={(wikiUrl) => setUrl1(wikiUrl)}
+            />
+            <div className="hidden md:flex items-center justify-center mx-4 mt-10">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+            </div>
+            <Suggestions
+              placeholder="Search for Wiki page (URL 2)"
+              setUrl={(wikiUrl) => setUrl2(wikiUrl)}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+            <div className="text-lg mb-2 md:mb-0 md:mr-2">
+              <span>
+                {isBFS ? (
+                  <label className="text-2xl">BFS Search Algorithm</label>
+                ) : (
+                  <label className="text-2xl">IDS Search Algorithm</label>
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+            <Switch onClick={handleFunc} defaultChecked={isBFS} />
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+            <div className="text-lg mb-2 md:mb-0 md:mr-2">
+              <span>
+                {isSingle ? (
+                  <label className="text-2xl">Single Solution</label>
+                ) : (
+                  <label className="text-2xl">Multiple Solution</label>
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center mb-4">
+            <Switch onClick={handleMethod} defaultChecked={isSingle} />
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300"
+              onClick={handleProcessClick}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-          </div>
-          <Suggestions
-            placeholder="Search for Wiki page (URL 2)"
-            setUrl={(wikiUrl) => setUrl2(wikiUrl)}
-          />
-        </div>
-
-        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
-          <div className="text-lg mb-2 md:mb-0 md:mr-2">
-            <span>
-              {isBFS ? (
-                <label className="text-2xl">BFS Search Algorithm</label>
-              ) : (
-                <label className="text-2xl">IDS Search Algorithm</label>
-              )}
-            </span>
+              Process Wiki Race
+            </button>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
-          <Switch onClick={handleFunc} defaultChecked={isBFS} />
-        </div>
-
-        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
-          <div className="text-lg mb-2 md:mb-0 md:mr-2">
-            <span>
-              {isSingle ? (
-                <label className="text-2xl">Single Solution</label>
-              ) : (
-                <label className="text-2xl">Multiple Solution</label>
-              )}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row items-center justify-center mb-4">
-          <Switch onClick={handleMethod} defaultChecked={isSingle} />
-        </div>
-
-        <div className="flex justify-center">
-          <button
-            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300"
-            onClick={handleProcessClick}
-          >
-            Process Wiki Race
-          </button>
-        </div>
+        {isLoading ? (
+          <Spin tip="Loading..." size="large" />
+        ) : (
+          solutions.length > 0 && (
+            <div className="mb-16">
+              <ResultGraph data={solutions} />
+              <div className="text-white justify-center items-center flex mt-8">
+                <span>
+                  Duration: <span className="font-extrabold">{duration}</span>
+                </span>
+              </div>
+              <div className="text-white justify-center items-center flex mb-8">
+                <span>
+                  Visited a total of{" "}
+                  <span className="font-extrabold">
+                    {total_visited} wikipedia articles
+                  </span>{" "}
+                  with found solution in{" "}
+                  <span className="font-extrabold">{depth} minimum depth</span>
+                </span>
+              </div>
+              <ResultListList UrlListList={solutions} />
+            </div>
+          )
+        )}
       </div>
-
-      {isLoading ? (
-        <Spin tip="Loading..." size="large" />
-      ) : (
-        solutions.length > 0 && (
-          <div className="mb-16">
-            <ResultGraph data={solutions} />
-            <div className="text-white justify-center items-center flex mt-8">
-              <span>
-                Duration: <span className="font-extrabold">{duration}</span>
-              </span>
-            </div>
-            <div className="text-white justify-center items-center flex mb-8">
-              <span>
-                Visited a total of{" "}
-                <span className="font-extrabold">
-                  {total_visited} wikipedia articles
-                </span>{" "}
-                with found solution in{" "}
-                <span className="font-extrabold">{depth} minimum depth</span>
-              </span>
-            </div>
-            <ResultListList UrlListList={solutions} />
-          </div>
-        )
-      )}
-    </div>
+    </form>
   );
 }

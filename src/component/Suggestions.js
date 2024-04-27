@@ -80,6 +80,7 @@ const Suggestions = ({ setUrl, placeholder }) => {
         onChange={handleInputChange}
         placeholder={placeholder}
         className="w-full p-3 border border-gray-300 rounded text-black"
+        required
       />
       {isFetching && showDropdown && (
         <div className="absolute top-full left-0">Loading...</div>
