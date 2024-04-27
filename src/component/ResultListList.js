@@ -7,7 +7,13 @@ const ResultListList = ({ UrlListList }) => {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4 mr-8 ml-8">
+    <div
+      className="
+        grid 
+        grid-cols-1 sm:grid-cols-2 md:grid-cols-3 
+        gap-4 
+        mr-8 ml-8"
+    >
       {UrlListList.map((urlList, index) => (
         <div key={index} className="col-span-1">
           <ResultList UrlList={urlList} />

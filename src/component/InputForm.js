@@ -80,8 +80,8 @@ export default function InputForm() {
     }
 
     const queryParams = new URLSearchParams({
-      source,
-      goal,
+      source: getTitleFromWikiUrl(source),
+      goal: getTitleFromWikiUrl(goal),
     }).toString();
 
     const url = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
@@ -97,6 +97,7 @@ export default function InputForm() {
         const { solutions, duration } = data;
         setSolutions(solutions);
         setDuration(duration);
+        console.log(solutions);
       })
       .catch((error) => {
         console.error("Error fetching:", error);
@@ -114,7 +115,7 @@ export default function InputForm() {
             placeholder="Search for Wiki page (URL 1)"
             setUrl={(wikiUrl) => setUrl1(wikiUrl)}
           />
-          <div className="hidden md:flex items-center justify-center mx-4">
+          <div className="hidden md:flex items-center justify-center mx-4 mt-10">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-white"

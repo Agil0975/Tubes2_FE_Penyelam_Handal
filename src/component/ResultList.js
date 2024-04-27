@@ -47,7 +47,7 @@ const ResultList = ({ UrlList }) => {
               <div className="flex-shrink-0">
                 <img
                   className="rounded-lg w-10 h-10"
-                  src={pageImage ? pageImage : { defaultImg }}
+                  src={pageImage ? pageImage : defaultImg}
                   alt="image"
                 />
               </div>
