@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import defaultImg from "../images/sample_ds3.jpg";
+import theAgil from "../images/Agil.jpg";
+import theDaniel from "../images/Daniel.jpg";
+import theRafly from "../images/Rafly.jpg";
 
 const About = () => {
   return (
@@ -43,7 +46,7 @@ const About = () => {
         <div className="flex flex-col items-center">
           <Link to="https://github.com/Agil0975">
             <img
-              src={defaultImg}
+              src={theAgil}
               alt="Agil Fadillah Sabri"
               className="w-32 h-32 rounded-md mb-4"
             />
@@ -54,7 +57,7 @@ const About = () => {
         <div className="flex flex-col items-center">
           <Link to="https://github.com/raflyhangga">
             <img
-              src={defaultImg}
+              src={theRafly}
               alt="Raden Rafly Hanggaraksa B"
               className="w-32 h-32 rounded-md mb-4"
             />
@@ -65,7 +68,7 @@ const About = () => {
         <div className="flex flex-col items-center">
           <Link to="https://github.com/Gryphuss">
             <img
-              src={defaultImg}
+              src={theDaniel}
               alt="Daniel Mulia Putra Manurung"
               className="w-32 h-32 rounded-md mb-4"
             />
