@@ -9,44 +9,36 @@ const isValidWikiUrl = (url) => {
   return pattern.test(url);
 };
 
-async function doesWikipediaPageExist(pageTitle) {
-  if (pageTitle === null || pageTitle === undefined || pageTitle === "") {
-    return false;
-  }
-  const baseUrl = "https://en.wikipedia.org/w/api.php";
-  const params = new URLSearchParams({
-    action: "query",
-    titles: pageTitle,
-    format: "json",
-    prop: "info|extracts",
-    inprop: "url",
-    explaintext: true,
-    origin: "*",
-  });
-
-  const response = await fetch(`${baseUrl}?${params.toString()}`);
-  const data = await response.json();
-
-  const page = Object.values(data.query.pages)[0];
-
-  if (page.missing || page.pageid === -1) {
+const doesWikipediaPageExist = async (title) => {
+  console.log(title);
+  if (!title || title.trim() === "") {
     return false;
   }
 
-  // if (page.redirectfrom || page.canonicaltitle !== pageTitle) {
-  //   return false;
-  // }
+  const formattedTitle = title.trim().replace(/ /g, "_");
 
-  if (page.disambiguation) {
+  try {
+    const response = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(
+        formattedTitle
+      )}&format=json&redirects=1&origin=*`
+    );
+
+    if (!response.ok) {
+      throw new Error("API request failed");
+    }
+
+    const data = await response.json();
+    const pageInfo = data.query.pages;
+
+    const pageId = Object.keys(pageInfo)[0];
+
+    return pageId !== "-1";
+  } catch (error) {
+    console.error("Error checking Wikipedia page:", error);
     return false;
   }
-
-  if (!page.extract || page.extract.trim() === "") {
-    return false;
-  }
-
-  return true;
-}
+};
 
 async function validateTwoWikipediaUrls(url1, url2) {
   const [isValid1, isValid2] = await Promise.all([
@@ -74,6 +66,8 @@ export default function InputForm() {
   const [isBFS, setFunc] = useState(true);
   const [solutions, setSolutions] = useState([]);
   const [duration, setDuration] = useState("");
+  const [depth, setDepth] = useState("");
+  const [total_visited, setVisited] = useState("");
   const [isSingle, setMethod] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -127,9 +121,11 @@ export default function InputForm() {
             return response.json();
           })
           .then((data) => {
-            const { solutions, duration } = data;
+            const { solutions, duration, total_visited, depth } = data;
             setSolutions(solutions);
             setDuration(duration);
+            setVisited(total_visited);
+            setDepth(depth);
             console.log(solutions);
           })
           .catch((error) => {
@@ -141,6 +137,8 @@ export default function InputForm() {
       } else {
         setSolutions([]);
         setDuration(0);
+        setVisited(0);
+        setDepth(0);
         setIsLoading(false);
         return;
       }
@@ -225,8 +223,20 @@ export default function InputForm() {
         solutions.length > 0 && (
           <div className="mb-16">
             <ResultGraph data={solutions} />
+            <div className="text-white justify-center items-center flex mt-8">
+              <span>
+                Duration: <span className="font-extrabold">{duration}</span>
+              </span>
+            </div>
             <div className="text-white justify-center items-center flex mb-8">
-              <span>Duration: {duration}</span>
+              <span>
+                Visited a total of{" "}
+                <span className="font-extrabold">
+                  {total_visited} wikipedia articles
+                </span>{" "}
+                with found solution in{" "}
+                <span className="font-extrabold">{depth} minimum depth</span>
+              </span>
             </div>
             <ResultListList UrlListList={solutions} />
           </div>

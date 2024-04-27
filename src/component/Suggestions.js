@@ -7,10 +7,10 @@ const Suggestions = ({ setUrl, placeholder }) => {
   const [showDropdown, setShowDropdown] = useState(true);
   const dropdownRef = useRef(null);
 
-  function getWikipediaUrl(title) {
-    const formattedTitle = encodeURIComponent(title.replace(/\s+/g, "_"));
-    return `https://en.wikipedia.org/wiki/${formattedTitle}`;
-  }
+  // function getWikipediaUrl(title) {
+  //   const formattedTitle = encodeURIComponent(title.replace(/\s+/g, "_"));
+  //   return `https://en.wikipedia.org/wiki/${formattedTitle}`;
+  // }
 
   useEffect(() => {
     if (query.length === 0) {
@@ -60,8 +60,8 @@ const Suggestions = ({ setUrl, placeholder }) => {
   }, []);
 
   const handleSuggestionClick = (title) => {
-    const wikiUrl = getWikipediaUrl(title);
-    setUrl(wikiUrl);
+    // const wikiUrl = getWikipediaUrl(title);
+    setUrl(title);
     setQuery(title);
     setShowDropdown(false);
   };
