@@ -236,9 +236,6 @@ export default function InputForm() {
                 </span>
               </div>
               <div className="text-white justify-center items-center flex mb-8">
-                <span className="font-extrabold">
-                  Found a total of {solutions.length} path
-                </span>
                 <span>
                   Visited a total of{" "}
                   <span className="font-extrabold">
