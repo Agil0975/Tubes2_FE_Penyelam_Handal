@@ -230,7 +230,15 @@ export default function InputForm() {
                   Duration: <span className="font-extrabold">{duration}</span>
                 </span>
               </div>
+              <div className="text-white justify-center items-center flex">
+                <span className="font-extrabold">
+                  Found a total of {solutions.length} path
+                </span>
+              </div>
               <div className="text-white justify-center items-center flex mb-8">
+                <span className="font-extrabold">
+                  Found a total of {solutions.length} path
+                </span>
                 <span>
                   Visited a total of{" "}
                   <span className="font-extrabold">
