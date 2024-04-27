@@ -48,3 +48,10 @@ npm start
 - [React](https://reactjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Axios](https://axios-http.com/)
+
+## Anggota kelompok:
+| NIM |  Nama Anggota  |
+|:-----|:--------:|
+| 13522006 | Agil Fadillah Sabri |
+| 13522014 | Raden Rafly Hanggaraksa B |
+| 13522043 | Daniel Mulia Putra Manurung |
