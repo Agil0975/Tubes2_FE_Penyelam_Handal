@@ -9,14 +9,62 @@ const isValidWikiUrl = (url) => {
   return pattern.test(url);
 };
 
-const doesWikiPageExist = async (url) => {
-  const response = await fetch(url, { method: "HEAD" });
-  return response.ok;
-};
+async function doesWikipediaPageExist(pageTitle) {
+  if (pageTitle === null || pageTitle === undefined || pageTitle === "") {
+    return false;
+  }
+  const baseUrl = "https://en.wikipedia.org/w/api.php";
+  const params = new URLSearchParams({
+    action: "query",
+    titles: pageTitle,
+    format: "json",
+    prop: "info|extracts",
+    inprop: "url",
+    explaintext: true,
+    origin: "*",
+  });
+
+  const response = await fetch(`${baseUrl}?${params.toString()}`);
+  const data = await response.json();
+
+  const page = Object.values(data.query.pages)[0];
+
+  if (page.missing || page.pageid === -1) {
+    return false;
+  }
+
+  // if (page.redirectfrom || page.canonicaltitle !== pageTitle) {
+  //   return false;
+  // }
+
+  if (page.disambiguation) {
+    return false;
+  }
+
+  if (!page.extract || page.extract.trim() === "") {
+    return false;
+  }
+
+  return true;
+}
+
+async function validateTwoWikipediaUrls(url1, url2) {
+  const [isValid1, isValid2] = await Promise.all([
+    doesWikipediaPageExist(url1),
+    doesWikipediaPageExist(url2),
+  ]);
+
+  if (!isValid1 || !isValid2) {
+    message.error("One or both Wikipedia pages are invalid");
+    return false;
+  }
+
+  return true;
+}
 
 const concatWiki = (title) => {
   const baseUrl = "https://en.wikipedia.org/wiki/";
-  const formattedTopic = title.replace(/\s+/g, "_"); // Replace spaces with underscores
+  const formattedTopic = title.replace(/\s+/g, "_");
   return baseUrl + formattedTopic;
 };
 
@@ -43,68 +91,60 @@ export default function InputForm() {
     return index !== -1 && index < parts.length - 1 ? parts[index + 1] : null;
   };
 
-  const validateUrl = async (url) => {
-    if (!isValidWikiUrl(url)) {
-      message.error("Invalid Wikipedia URL");
-      return false;
-    }
-
-    try {
-      const exists = await doesWikiPageExist(url);
-      if (!exists) {
-        message.error("Wikipedia page does not exist");
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      message.error("Error checking Wikipedia page");
-      return false;
-    }
-  };
-
   const handleProcessClick = () => {
     setIsLoading(true);
-    const algorithm = isBFS ? "bfs" : "ids";
-    const results = isSingle ? "single" : "many";
 
-    const source = isValidWikiUrl(url1) ? url1 : concatWiki(url1);
-    const goal = isValidWikiUrl(url2) ? url2 : concatWiki(url2);
+    validateTwoWikipediaUrls(url1, url2).then((isValid) => {
+      console.log(isValid);
+      if (isValid) {
+        const algorithm = isBFS ? "bfs" : "ids";
+        const results = isSingle ? "single" : "many";
 
-    console.log(source, goal);
+        const source = isValidWikiUrl(url1) ? url1 : concatWiki(url1);
+        const goal = isValidWikiUrl(url2) ? url2 : concatWiki(url2);
 
-    if (!source || !goal) {
-      message.error("Invalid URLs for source or goal");
-      setIsLoading(false);
-      return;
-    }
+        console.log(doesWikipediaPageExist(url1), doesWikipediaPageExist(url2));
+        console.log(source, goal);
 
-    const queryParams = new URLSearchParams({
-      source: getTitleFromWikiUrl(source),
-      goal: getTitleFromWikiUrl(goal),
-    }).toString();
+        if (!source || !goal) {
+          message.error("Invalid URLs for source or goal");
+          setIsLoading(false);
+          return;
+        }
 
-    const url = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
+        const queryParams = new URLSearchParams({
+          source: getTitleFromWikiUrl(source),
+          goal: getTitleFromWikiUrl(goal),
+        }).toString();
 
-    fetch(url)
-      .then((response) => {
-        // if (!response.found) {
-        //   throw new Error("Network response was not ok");
-        // }
-        return response.json();
-      })
-      .then((data) => {
-        const { solutions, duration } = data;
-        setSolutions(solutions);
-        setDuration(duration);
-        console.log(solutions);
-      })
-      .catch((error) => {
-        console.error("Error fetching:", error);
-      })
-      .finally(() => {
+        const url = `http://localhost:9090/${algorithm}/${results}?${queryParams}`;
+
+        fetch(url)
+          .then((response) => {
+            // if (!response.found) {
+            //   throw new Error("Network response was not ok");
+            // }
+            return response.json();
+          })
+          .then((data) => {
+            const { solutions, duration } = data;
+            setSolutions(solutions);
+            setDuration(duration);
+            console.log(solutions);
+          })
+          .catch((error) => {
+            console.error("Error fetching:", error);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      } else {
+        setSolutions([]);
+        setDuration(0);
         setIsLoading(false);
-      });
+        return;
+      }
+    });
   };
 
   return (
