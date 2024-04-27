@@ -14,6 +14,12 @@ const doesWikiPageExist = async (url) => {
   return response.ok;
 };
 
+const concatWiki = (title) => {
+  const baseUrl = "https://en.wikipedia.org/wiki/";
+  const formattedTopic = title.replace(/\s+/g, "_"); // Replace spaces with underscores
+  return baseUrl + formattedTopic;
+};
+
 export default function InputForm() {
   const [url1, setUrl1] = useState("");
   const [url2, setUrl2] = useState("");
@@ -62,8 +68,10 @@ export default function InputForm() {
     const algorithm = isBFS ? "bfs" : "ids";
     const results = isSingle ? "single" : "many";
 
-    const source = getTitleFromWikiUrl(url1);
-    const goal = getTitleFromWikiUrl(url2);
+    const source = isValidWikiUrl(url1) ? url1 : concatWiki(url1);
+    const goal = isValidWikiUrl(url2) ? url2 : concatWiki(url2);
+
+    console.log(source, goal);
 
     if (!source || !goal) {
       message.error("Invalid URLs for source or goal");
