@@ -210,6 +210,7 @@ export default function InputForm() {
 
           <div className="flex justify-center">
             <button
+              type="button"
               className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300"
               onClick={handleProcessClick}
             >
